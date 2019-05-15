@@ -49,7 +49,7 @@ func updatestatment(upsql string) string {
 func deletestatment(delstatment string) string {
 	delrec := strings.TrimSpace(delstatment)
 	delout := delrec[6:]
-	selectrel := "select * from   " + delout
+	selectrel := "select *   " + delout
 	if strings.HasSuffix(selectrel, ";") {
 		return selectrel
 	} else {
