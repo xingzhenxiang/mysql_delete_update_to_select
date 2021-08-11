@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -12,25 +11,27 @@ import (
 
 func updatestatment(upsql string) string {
 	mystring := strings.TrimSpace(upsql)
-	setpos := strings.Index(mystring, "set")
-	wherepos := strings.Index(mystring, "where")
+	setpos := strings.Index(strings.ToLower(mystring), "set")
+	//fmt.Println(setpos)
+	// if setpos == -1 {
+	// 	setpos = strings.Index(mystring, "SET")
+	// }
 
-	// fmt.Println(setpos)
-	//mystringset := mystring[setpos+3 : wherepos]
+	wherepos := strings.Index(strings.ToLower(mystring), "where")
+	// if wherepos == -1 {
+	// 	wherepos = strings.Index(mystring, "WHERE")
+	// }
+
 	mystringwhere := mystring[wherepos:]
 	mytablename := mystring[6:setpos]
-	//fmt.Println(mystringset)
-	//fmt.Println(mystringwhere)
-	//fmt.Println(mytablename)
-	//fmt.Println("-----------------------------")
-	selectstr := "select * into dbmc.bak."
-        myintotable:=strings.Replace(mytablename,".","_",-1)
-        myintotable=strings.Replace(myintotable,"[","",-1)
-        myintotable=strings.Replace(myintotable,"]","",-1)
-        myintotable=strings.Trim(myintotable," ")
 
-	//fmt.Println(strings.Split(mystringset, ","))
-	selectrel := selectstr + myintotable +"_"+time.Now().Format("20060102150405") + " from " + mytablename + " " + mystringwhere
+	selectstr := "select * into dbmc.bak."
+	myintotable := strings.Replace(mytablename, ".", "_", -1)
+	myintotable = strings.Replace(myintotable, "[", "", -1)
+	myintotable = strings.Replace(myintotable, "]", "", -1)
+	myintotable = strings.Trim(myintotable, " ")
+
+	selectrel := selectstr + myintotable + "_" + time.Now().Format("20060102150405") + " from " + mytablename + " " + mystringwhere
 	if strings.HasSuffix(selectrel, ";") {
 		return selectrel
 	} else {
@@ -41,13 +42,17 @@ func updatestatment(upsql string) string {
 func deletestatment(delstatment string) string {
 	delrec := strings.TrimSpace(delstatment)
 	delout := delrec[6:]
-        wherepos := strings.Index(delout, "where")
-        myintotable := delout[6:wherepos]
-        myintotable=strings.Replace(myintotable,".","_",-1)
-        myintotable=strings.Replace(myintotable,"[","",-1)
-        myintotable=strings.Replace(myintotable,"]","",-1)
-        myintotable=strings.Trim(myintotable," ")
-	selectrel := "select * into dbmc.bak." + myintotable +"_"+time.Now().Format("20060102150405") + delout
+	wherepos := strings.Index(strings.ToLower(delout), "where")
+	// if wherepos == -1 {
+	// 	wherepos = strings.Index(delout, "WHERE")
+	// }
+
+	myintotable := delout[6:wherepos]
+	myintotable = strings.Replace(myintotable, ".", "_", -1)
+	myintotable = strings.Replace(myintotable, "[", "", -1)
+	myintotable = strings.Replace(myintotable, "]", "", -1)
+	myintotable = strings.Trim(myintotable, " ")
+	selectrel := "select * into dbmc.bak." + myintotable + "_" + time.Now().Format("20060102150405") + delout
 	if strings.HasSuffix(selectrel, ";") {
 		return selectrel
 	} else {
@@ -57,11 +62,11 @@ func deletestatment(delstatment string) string {
 
 func fitter(instr string) {
 	switch {
-	case strings.HasPrefix(instr, "update"):
+	case strings.HasPrefix(strings.ToLower(instr), "update"):
 
 		fmt.Println(updatestatment(instr))
 
-	case strings.HasPrefix(instr, "delete"):
+	case strings.HasPrefix(strings.ToLower(instr), "delete"):
 		fmt.Println(deletestatment(instr))
 	default:
 		//fmt.Println("  ---------" + beforestr)
@@ -90,9 +95,9 @@ func main() {
 			fitter(beforestr)
 			break
 		}
-		astr := strings.TrimSpace(strings.ToLower(string(a)))
-		//fmt.Println(astr)
-		if strings.HasPrefix(astr, "update") || strings.HasPrefix(astr, "delete") {
+		astr := strings.TrimSpace(string(a))
+		//	fmt.Println(astr)
+		if strings.HasPrefix(strings.ToLower(astr), "update") || strings.HasPrefix(strings.ToLower(astr), "delete") {
 			//fmt.Println(beforestr)
 			fitter(beforestr)
 			beforestr = astr
