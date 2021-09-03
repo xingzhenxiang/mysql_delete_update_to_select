@@ -60,6 +60,12 @@ func deletestatment(delstatment string) string {
 	}
 }
 
+func tsprint(instr string) {
+
+	fmt.Println(instr)
+
+}
+
 func fitter(instr string) {
 	switch {
 	case strings.HasPrefix(strings.ToLower(instr), "update"):
@@ -71,16 +77,11 @@ func fitter(instr string) {
 	default:
 		//fmt.Println("  ---------" + beforestr)
 	}
+
 }
 
-func main() {
-	var url, beforestr string
-	//fmt.Printf("Please input the file path:[d:/sqlupdatebefore.txt] ")
-	//fmt.Scanln(&url)
-	//file, err := os.Open("/opt/sqlbef.txt")
-	if len(strings.TrimSpace(url)) == 0 {
-		url = "d:/sqlupdatebefore.txt"
-	}
+func filetoselect(url string) {
+	var beforestr string
 	file, err := os.Open(url)
 
 	if err != nil {
@@ -93,6 +94,7 @@ func main() {
 		a, _, c := br.ReadLine()
 		if c == io.EOF {
 			fitter(beforestr)
+
 			break
 		}
 		astr := strings.TrimSpace(string(a))
@@ -100,9 +102,61 @@ func main() {
 		if strings.HasPrefix(strings.ToLower(astr), "update") || strings.HasPrefix(strings.ToLower(astr), "delete") {
 			//fmt.Println(beforestr)
 			fitter(beforestr)
+
 			beforestr = astr
 		} else {
 			beforestr = beforestr + " " + astr
 		}
 	}
+}
+
+func fileold(url string) {
+	var beforestr string
+	file, err := os.Open(url)
+
+	if err != nil {
+		fmt.Printf("Error: %s \n", err)
+		return
+	}
+	defer file.Close()
+	br := bufio.NewReader(file)
+	for {
+		a, _, c := br.ReadLine()
+		if c == io.EOF {
+
+			tsprint(beforestr)
+			break
+		}
+		astr := strings.TrimSpace(string(a))
+		//	fmt.Println(astr)
+		if strings.HasPrefix(strings.ToLower(astr), "update") || strings.HasPrefix(strings.ToLower(astr), "delete") {
+			//fmt.Println(beforestr)
+
+			tsprint(beforestr)
+			beforestr = astr
+		} else {
+			beforestr = beforestr + " " + astr
+		}
+	}
+}
+
+func main() {
+	var url string
+	//fmt.Printf("Please input the file path:[d:/sqlupdatebefore.txt] ")
+	//fmt.Scanln(&url)
+	//file, err := os.Open("/opt/sqlbef.txt")
+	if len(strings.TrimSpace(url)) == 0 {
+		url = "./sqlupdatebefore.txt"
+	}
+
+	filetoselect(url)
+
+	fmt.Println("")
+	fmt.Println("")
+	fmt.Println("begin tran")
+	fileold(url)
+	fmt.Println("")
+	fmt.Println("")
+	fmt.Println("--commit tran")
+
 }
