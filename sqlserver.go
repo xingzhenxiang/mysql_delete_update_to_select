@@ -68,11 +68,11 @@ func tsprint(instr string) {
 
 func fitter(instr string) {
 	switch {
-	case strings.HasPrefix(strings.ToLower(instr), "update"):
+	case strings.HasPrefix(strings.ToLower(instr), "update "):
 
 		fmt.Println(updatestatment(instr))
 
-	case strings.HasPrefix(strings.ToLower(instr), "delete"):
+	case strings.HasPrefix(strings.ToLower(instr), "delete "):
 		fmt.Println(deletestatment(instr))
 	default:
 		//fmt.Println("  ---------" + beforestr)
@@ -129,7 +129,7 @@ func fileold(url string) {
 		}
 		astr := strings.TrimSpace(string(a))
 		//	fmt.Println(astr)
-		if strings.HasPrefix(strings.ToLower(astr), "update") || strings.HasPrefix(strings.ToLower(astr), "delete") {
+		if strings.HasPrefix(strings.ToLower(astr), "update ") || strings.HasPrefix(strings.ToLower(astr), "delete ") {
 			//fmt.Println(beforestr)
 
 			tsprint(beforestr)
@@ -137,6 +137,7 @@ func fileold(url string) {
 		} else {
 			beforestr = beforestr + " " + astr
 		}
+		//time.Sleep(time.Second * 1)
 	}
 }
 
